@@ -1,0 +1,16 @@
+[package]
+name = "runtime"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.73"
+jsonrpsee = { version = "0.20", features = ["server", "http-client", "ws-client", "macros", "client-ws-transport-native-tls"] }
+tokio = { version = "1.32", features = ["full"] }
+
+primitives = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+encryptor = { git = "https://github.com/radiusxyz/encryptor" }
+vdf = { git = "https://github.com/radiusxyz/vdf" }
