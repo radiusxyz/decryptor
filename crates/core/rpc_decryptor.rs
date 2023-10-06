@@ -2,19 +2,30 @@ use jsonrpsee::server::Server;
 use jsonrpsee::RpcModule;
 
 use primitives::sync::{Arc, Mutex};
-use runtime::rpc::parameter::EncryptedTransaction;
+use primitives::types::EncryptedTransaction;
 use runtime::rpc::RpcParameter;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 
+extern crate dotenv;
+use dotenv::dotenv;
+use std::env;
+
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 fn main() -> Result<()> {
+    dotenv().ok();
+
     tracing_subscriber::fmt().init();
     let flag = Arc::new(AtomicBool::new(true));
+
+    let thread_count = env::var("WORKER_THREAD_COUNT")
+        .expect("WORKER_THREAD_COUNT must be set")
+        .parse()?;
+
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .enable_all()
-        .worker_threads(8)
+        .worker_threads(thread_count)
         .build()?;
 
     let server_flag = flag.clone();
@@ -38,7 +49,12 @@ fn main() -> Result<()> {
 }
 
 async fn run_server(flag: Arc<AtomicBool>) -> Result<()> {
-    let server = Server::builder().build("127.0.0.1:8080").await?;
+    let host = env::var("HOST").expect("HOST must be set");
+    let port = env::var("PORT").expect("PORT must be set");
+
+    let server = Server::builder()
+        .build(format!("{}:{}", host, port))
+        .await?;
 
     let state = Mutex::new(HashMap::<String, usize>::new());
 

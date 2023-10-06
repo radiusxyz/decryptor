@@ -5,8 +5,8 @@ edition = "2021"
 rust-version = "1.72"
 
 [[bin]]
-name = "decryptor"
-path = "crates/core/main.rs"
+name = "rpc-decryptor"
+path = "crates/core/rpc_decryptor.rs"
 
 [[bin]]
 name = "rpc-client"
@@ -39,8 +39,7 @@ tower-http = { version = "0.4.0", features = ["full"] }
 tower = { version = "0.4.13", features = ["full"] }
 hyper = "0.14.20"
 console-subscriber = "0.1.8"
-
-
+dotenv = "0.15"
 
 primitives = { workspace = true }
 runtime = { workspace = true }
